@@ -13,7 +13,8 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/licencia-MIT-blue.svg" alt="Licencia MIT">
+  <img src="https://img.shields.io/badge/c%C3%B3digo-MIT-blue.svg" alt="Código: licencia MIT">
+  <img src="https://img.shields.io/badge/datos-CC%20BY%204.0-lightgrey.svg" alt="Datos: licencia CC BY 4.0">
   <img src="https://img.shields.io/badge/demo-online-brightgreen.svg" alt="Demo online">
 </p>
 
@@ -26,6 +27,7 @@ Este visor permite consultar de forma interactiva las 24 líneas de colectivo ur
 ### Funcionalidades
 
 - Recorridos de las 24 líneas, diferenciando ida y vuelta (o sentido horario / antihorario en las circulares), con horarios desplegables por línea.
+- Horarios de paso por parada: la tabla de cada línea por tipo de día (hábiles, sábados, domingos), con el próximo paso resaltado, los horarios de cada parada agrupados por hora, buscador por línea, parada y día, y versión para imprimir. Se abre en otra pestaña desde cada línea del mapa y desde el reloj del encabezado.
 - Paradas geolocalizadas, con filtros por refugio, cartel y poste, y las líneas que pasan a menos de 5 metros al tocarlas.
 - Ubicación del usuario y listado de paradas más cercanas.
 - Buscador de línea sugerida por origen y destino (esquina relevada o punto marcado en el mapa), con hasta 3 opciones ordenadas por distancia a pie.
@@ -38,6 +40,7 @@ Este visor permite consultar de forma interactiva las 24 líneas de colectivo ur
 
 - **Recorridos de líneas:** Dirección General de Transporte (2026).
 - **Paradas:** Dirección General de Transporte (2026), sobre relevamiento propio (2023).
+- **Horarios de paso por parada:** Horarios informados por Sol Bus actualizados al 7 de septiembre de 2026.
 - **Cartografía base:** Instituto Geográfico Nacional (Argenmap).
 - **Imagen satelital:** [Esri World Imagery](https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9) - Esri, Vantor, Earthstar Geographics y la comunidad de usuarios GIS.
 - **Nomenclador de calles (respaldo del buscador de línea):** API Georef, Jefatura de Gabinete de Ministros de la Nación ([datos.gob.ar](https://datos.gob.ar)).
@@ -51,47 +54,10 @@ El uso de [Argenmap](https://ign-argentina.github.io/argenmap-web/) como mapa ba
 
 Sitio estático construido con HTML, CSS y JavaScript, sin dependencias externas ni backend. El mapa se implementa con [Leaflet](https://leafletjs.com/) 1.9.4, servido desde el propio repositorio (`vendor/leaflet/`) y no desde un CDN, para que el visor no dependa de un tercero. El buscador de línea complementa el listado propio de esquinas relevadas con consultas opcionales a la [API Georef](https://datosgobar.github.io/georef-ar-api/) para intersecciones no incluidas en el relevamiento; si el servicio no responde, el buscador sigue funcionando sólo con los datos propios. La burbuja de clima consulta la API pública de [Open-Meteo](https://open-meteo.com/).
 
-### Despliegue
-
-El repositorio contiene las **fuentes**, no el sitio publicado. Dos archivos que el visor pide por `fetch` son productos de build y no están versionados:
-
-| Producto (generado) | Fuente (versionada) |
-| --- | --- |
-| `data/recorridos.geojson` | `data/linea-*.geojson` |
-| `data/paradas.json` | `data/paradas.geojson` |
-
-Los genera `tools/build-datos.mjs`, que además valida las fuentes exportadas desde QGIS: sentidos declarados, geometrías multiparte con huecos, features duplicadas, coordenadas fuera del encuadre de la ciudad y recorridos de ida y vuelta digitalizados en la misma dirección. Si algo de eso falla, el build se detiene y el dato no llega al visor.
-
-Por eso **clonar el repositorio y servirlo tal cual no funciona**: falta ese paso y el visor responde `HTTP 404` al cargar `data/recorridos.geojson`.
-
-Hay dos formas de desplegarlo en otro servidor:
-
-**1. Rama `deploy` (sin Node).** La rama [`deploy`](../../tree/deploy) contiene el sitio ya construido, actualizado automáticamente en cada push a `main`. Es un espejo exacto de lo que se publica en GitHub Pages, con historial lineal:
-
-```bash
-git clone --branch deploy https://github.com/comodoro-mit/transporte.git
-# y de ahí en más, para actualizar:
-git pull
-```
-
-El contenido de la rama es la raíz del sitio: se publica tal cual, sin construir nada.
-
-**2. Construir el sitio (Node 20 o superior).**
-
-```bash
-git clone https://github.com/comodoro-mit/transporte.git
-cd transporte
-node tools/build-datos.mjs    # genera los dos productos de datos
-node tools/build-pages.mjs _site
-```
-
-El sitio publicable queda en `_site/`. Para validar las fuentes sin escribir nada: `node tools/build-datos.mjs --check`.
-
-**Modo mantenimiento.** El switch `MODO_MANTENIMIENTO` en `js/visor.js` alterna entre el sitio completo y una pantalla de mantenimiento sin datos. Afecta por igual a GitHub Pages y a la rama `deploy`, que refleja siempre lo publicado.
-
 ### Licencia
 
-Distribuido bajo licencia MIT - ver [LICENSE](LICENSE).
+- **Código** (HTML, CSS, JavaScript y scripts de `tools/`): licencia MIT, ver [LICENSE](LICENSE).
+- **Datos** (recorridos, paradas y horarios de `data/`, y lo que el visor muestra a partir de ellos): [Creative Commons Atribución 4.0 Internacional (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/deed.es). Se pueden reutilizar citando la fuente; ver [data/LICENCIA.md](data/LICENCIA.md).
 
 ---
 ![Franja — Malvinas Argentinas](https://malvinas.argentinadatos.com/strip.png)
